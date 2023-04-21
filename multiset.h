@@ -1,11 +1,11 @@
 //#include <stdio.h>
 //#include <stdlib.h>
-//#include "define.h"
 
 #ifndef MULTISET_H_INCLUDED
 #define MULTISET_H_INCLUDED
 
 #include "listaordenada.h"
+#include "define.h"
 
 //Structs para la manipulación del multiset.
 
