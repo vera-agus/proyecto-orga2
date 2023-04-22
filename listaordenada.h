@@ -26,7 +26,7 @@ typedef comparacion_resultado_t (funcion_comparacion_t) (
   elemento_t *elem1, elemento_t *elem2
 );
 
-typedef struct lista lista_t;
+typedef struct lista lista_t; //struct lista == lista_t
 
 // ---------------------------------------------------------------------------------------------
 // Definición de prototipos y documentación de las funciones.
