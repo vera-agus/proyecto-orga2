@@ -6,7 +6,7 @@
 #define TRUE            1
 #define ELE_NULO        NULL
 
-// Macros con cÃ³digos de finalizaciÃ³n
+// Macros con códigos de finalización
 #define LST_POS_INVALIDA     2
 #define LST_ERROR_MEMORIA    3
 

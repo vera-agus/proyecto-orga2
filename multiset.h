@@ -1,27 +1,24 @@
-//#include <stdio.h>
-//#include <stdlib.h>
-
 #ifndef MULTISET_H_INCLUDED
 #define MULTISET_H_INCLUDED
 
 #include "listaordenada.h"
 #include "define.h"
 
-//Structs para la manipulaci贸n del multiset.
+//Structs para la manipulaci髇 del multiset.
 
 struct trie;
 typedef struct trie multiset_t;
 
 // ---------------------------------------------------------------------------------------------
-// Definici贸n de prototipos y documentaci贸n de las funciones.
+// Definici髇 de prototipos y documentaci髇 de las funciones.
 // ---------------------------------------------------------------------------------------------
 
 //Metodos de TDA multiset.
 
 /**
- Crea un multiset vac铆o de palabras y lo devuelve.
+ Crea un multiset vac韔 de palabras y lo devuelve.
 **/
-extern multiset_t *multiset crear();
+extern multiset_t *multiset_crear();
 
 /**
  Inserta la palabra s al multiset m.
@@ -34,12 +31,12 @@ extern void multiset_insertar(multiset_t *m, char *s);
 extern int multiset_cantidad(multiset_t *m, char *s);
 
 /**
- Devuelve una lista de tipo lista t ordenada seg煤n la funci贸n f con todos los elementos del multiset m y la cantidad de apariciones de cada uno.
+ Devuelve una lista de tipo lista t ordenada seg鷑 la funci髇 f con todos los elementos del multiset m y la cantidad de apariciones de cada uno.
 **/
-extern lista_t multiset_elementos(multiset_t *m, int (*f)(elemento_t,elemento_t)); 
+extern lista_t multiset_elementos(multiset_t *m, int (*f)(elemento_t, elemento_t));
 
 /**
- Elimina el multiset m liberando el espacio de memoria reservado. Luego de la invocaci贸n m debe valer NULL.
+ Elimina el multiset m liberando el espacio de memoria reservado. Luego de la invocaci髇 m debe valer NULL.
 **/
 extern void multiset_eliminar(multiset_t **m);
 
