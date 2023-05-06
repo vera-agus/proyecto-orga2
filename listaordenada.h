@@ -1,14 +1,4 @@
-#ifndef LISTA_H_INCLUDED
-#define LISTA_H_INCLUDED
 
-#include "define.h"
-
-typedef enum
-{
-  ELEM1_MAYOR_QUE_ELEM2,
-  ELEM1_IGUAL_QUE_ELEM2,
-  ELEM1_MENOR_QUE_ELEM2
-} comparacion_resultado_t;
 
 struct elemento
 {
@@ -19,9 +9,27 @@ struct elemento
 //Structs para la manipulación de la lista
 typedef struct elemento elemento_t;
 
-typedef comparacion_resultado_t (funcion_comparacion_t) (
-    elemento_t *elem1, elemento_t *elem2
-);
+
+
+typedef enum
+{
+  ELEM1_MAYOR_QUE_ELEM2,
+  ELEM1_IGUAL_QUE_ELEM2,
+  ELEM1_MENOR_QUE_ELEM2
+} comparacion_resultado_t;
+
+
+typedef comparacion_resultado_t (funcion_comparacion_t) ( //compara elem->b de cada elem, ordenandolos de menor a mayor.
+    elemento_t *elem1, elemento_t *elem2                  // si elem->b es igual compara los strings (elem->a).
+); //implementamos en el main.
+
+typedef struct celda celda_t;
+
+struct lista
+{
+    celda_t *primera; //puntero a la primera celda de la lista
+    int cantidad; // cantidad de elementos de la lista
+};
 
 typedef struct lista lista_t; //struct lista == lista_t
 
@@ -34,7 +42,7 @@ typedef struct lista lista_t; //struct lista == lista_t
 /**
  Crea una lista vacía y la devuelve.
 **/
-extern lista_t *lista_crear();
+extern lista_t * lista_crear();
 
 /**
  Inserta el elemento elem en la posición pos de la lista.
@@ -66,4 +74,4 @@ Devuelve verdadero (̸= 0) si la lista está vacía, y falso (= 0) si la lista c
 **/
 extern int lista_vacia(lista_t lista);
 
-#endif // LISTA_H_INCLUDED
+

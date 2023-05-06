@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "define.h"
 #include "listaordenada.h"
 // --> me tira error en compilación si no está comentado, pero no entiendo pq.
 // "multiple definition of ..." todas las funciones.
@@ -8,22 +8,11 @@
 typedef struct celda
 {
     elemento_t elem;
-    struct celda *siguiente;
-} celda_t;
-
-//typedef struct celda celda_t;
-
-struct lista
-{
-    celda_t *primera; //puntero a la primera celda de la lista
-    int cantidad; // cantidad de elementos de la lista
+    struct celda * siguiente;
 };
-
-// --------------------------------------------------------------
-
 // PROTOTIPOS DE FUNCIONES AUXILIARES
 
-celda_t* merge(celda_t* a, celda_t* b, funcion_comparacion_t comparar);
+celda_t * merge(celda_t* a, celda_t* b, funcion_comparacion_t comparar);
 int mergeSort(celda_t** p, funcion_comparacion_t comparar);
 int dividir(celda_t* p, celda_t** ini, celda_t** fin);
 
@@ -32,62 +21,94 @@ int dividir(celda_t* p, celda_t** ini, celda_t** fin);
 /**
  Inicializa una lista vacía.
 **/
-lista_t *lista_crear()
+lista_t * lista_crear()
 {
-    lista_t *lista = (lista_t*) malloc(sizeof(struct lista));
+    lista_t * lista = (lista_t *) malloc(sizeof(lista_t));
     lista->primera = NULL;
     lista->cantidad = 0;
     return lista;
-}
+};
 
 /**
  Inserta el elemento elem en la posición pos de la lista.
+ Asumimos:
+    Se crea una nueva celda con el elemento dentro, y se asigna en la posicion ingresada.
+    La primer posicion en la lista es 0.
+    La posicion ingresada debe estar en el rango de 0  a l->cant.
 **/
 int lista_insertar(lista_t *l, elemento_t elem, unsigned int pos)
-{ // asumimos que la primera posicion de la lista es 0.
-    if(l->cantidad >= pos) //Puede ser igual, en ese caso lo inserta ultimo
+{ 
+    if (pos > l->cantidad)
+       exit(LST_POS_INVALIDA);
+
+    celda_t *nueva_celda= malloc(sizeof(struct celda)); //Luego deberia ser liberado en el Eliminar.
+    nueva_celda->elem = elem;
+    if(pos == 0) //posicion es igual a 0.
     {
+        nueva_celda->siguiente= l->primera;
+        l->primera= nueva_celda;
+    }
+    else if (l->cantidad > pos){ //posicion mayor a 0 pero menos a l->cant.
         int i;
-        celda_t *celda= l->primera;
+        celda_t *celda_anterior= NULL;
+        celda_t *celda_actual= l->primera;
         for(i= 0; i < pos; i++)
         {
-            celda= celda->siguiente;
+            celda_anterior= celda_actual;
+            celda_actual= celda_actual->siguiente;
         }
-        celda_t *celdaAux= (celda_t*) malloc (sizeof(celda_t));
-        celdaAux->siguiente= celda->siguiente;
-        celda->siguiente= celdaAux;
-        celdaAux->elem= elem;
-
-        return 0;
+        nueva_celda->siguiente= celda_actual; //Inseramos la nueva celda dentras de celda actual, que esta ultima.
+        celda_anterior->siguiente= nueva_celda; //Insertamos la nueva celda siguente de celda anterior.
     }
-    else
-        exit(LST_POS_INVALIDA);
+    else if (l->cantidad == pos){//Cuando la posiscion es la ultima
+        int i;
+        celda_t *celda_anterior= NULL;
+        celda_t *celda_actual= l->primera;
+        for(i= 0; i < pos; i++)
+        {
+            celda_anterior= celda_actual;
+            celda_actual= celda_actual->siguiente;
+        }
+        celda_anterior->siguiente= nueva_celda;
+        nueva_celda->siguiente= NULL;        
+    }
+    l->cantidad++;
+
+    return 0;
 }
 
 /**
 Elimina el elemento de la posición pos de la lista.
+---------------------------
+La catedra va a modificar el enunciado para que no tengamos que guardar memomaria para el elemnto retornado.
+---------------------------
 **/
-elemento_t *lista_eliminar(lista_t *l, unsigned int pos)
-{
-    //considerando que cada celda no tiene necesariamente un elemento.
-    elemento_t elem;
-    elemento_t* elem_to_return;
-    celda_t *celda= l->primera;
-    if(l->cantidad >= pos)
-    {
-        int i;
-        for(i= 0; i < pos; i++)
-        {
-            celda= celda->siguiente;
-        }
-        elem = celda->elem;
-        elem_to_return = &elem;
-        //elem = NULL;
-        //free(elem); //es necesario? --> esto vi que hacíamos free cuando era puntero, podemos preguntarlo
-        return elem_to_return;
+elemento_t * lista_eliminar(lista_t* l, unsigned int pos) {
+    if (pos > l->cantidad) {
+        exit(LST_POS_INVALIDA); // Si la posición está fuera de los límites de la lista.
     }
-    else
-        exit(LST_POS_INVALIDA);
+    celda_t* actual = l->primera;
+    celda_t* anterior = NULL;
+    elemento_t * elemento_eliminado = (elemento_t *) malloc(sizeof(elemento_t));
+    // el puntero que acabamos de crear hay que liberarlo en el Main, esta bien? Si! 
+        //Vamos a tener que modificarlo luego de que actualicen el enunciado.
+    // Buscamos la celda correspondiente a la posición a eliminar
+    int i;
+    for (i = 0; i < pos; i++) {
+        anterior = actual;
+        actual = actual->siguiente;
+    }
+    if (anterior == NULL) {
+        // Si la celda a eliminar es la primera de la lista
+        l->primera = actual->siguiente;
+    } else {
+        // Si la celda a eliminar está en medio o al final de la lista
+        anterior->siguiente = actual->siguiente;
+    }
+    *elemento_eliminado = (actual->elem); // una copia del elemento.
+    free(actual); // Liberamos la memoria de la celda eliminada, PERDEMOS LA DIRECCION AL ELEMENTO.
+    l->cantidad--; // Actualizamos la cantidad de elementos de la lista
+    return elemento_eliminado;
 }
 
 /**
@@ -95,19 +116,19 @@ elemento_t *lista_eliminar(lista_t *l, unsigned int pos)
 **/
 elemento_t *lista_elemento(lista_t *l, unsigned int pos)
 {
-    elemento_t* elem_to_return = NULL;
+    if(pos > l->cantidad)
+        exit(LST_POS_INVALIDA);
+    elemento_t* elem_to_return = NULL; 
     celda_t *celda= l->primera;
     if(l->cantidad >= pos){
         int i;
         for(i= 0; i < pos; i++)
-            {
+        {
             celda= celda->siguiente;
         }
-        *elem_to_return = celda->elem;
-        return elem_to_return;
+        elem_to_return = &(celda->elem);
     }
-    else
-        exit(LST_POS_INVALIDA);
+    return elem_to_return;
 }
 
 /**
@@ -127,20 +148,6 @@ unsigned int lista_cantidad(lista_t *l)
 {
     return l->cantidad; //considerando que cada celda tiene un elem.
 }
-
-/*
-unsigned int lista_cantidad(lista_t *l)
-{
-    //considerando que cada celda no necesariamente tiene un elem.
-    int contador;
-    celda_t *celda= l->primera;
-    if(l->cantidad >= pos){
-        int i;
-        for(i= 0; i < pos; i++){
-            celda= celda->siguiente;
-    }
-}
-*/
 
 /**
 Devuelve verdadero (̸= 0) si la lista está vacía, y falso (= 0) si la lista contiene al menos un elemento.
