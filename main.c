@@ -23,12 +23,14 @@ int main()
     lista_insertar(prueba, elem2, 1);
     lista_insertar(prueba, elem3, 2);
     lista_insertar(prueba, elem4, 3);
-    printf("Elemento en la primera celda tiene como a y b: %i y %s\n", elem1.a , elem1.b);
+    printf("Elemento en la primera celda tiene como a y b: %i y %s\n", elem2.a , elem2.b);
     elemento_t *elemAux1;
-    elemAux1= lista_eliminar(prueba, 3);
+    elemAux1= lista_eliminar(prueba, 1);
+    //printf("Elemento en la primera celda tiene como a y b: %i y %s\n", elem1.a , elem1.b);
     printf("Elemento en la primera celda tiene como a y b: %i y %s\n", elemAux1->a , elemAux1->b);
-    elemento_t *elemAux2= lista_elemento(prueba, 1);
+    elemento_t *elemAux2= lista_elemento(prueba, 2);
     printf("Elemento en la primera celda tiene como a y b: %i y %s\n", elemAux2->a , elemAux2->b);
+
     return 0;
 }
 

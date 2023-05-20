@@ -9,8 +9,6 @@ struct elemento
 //Structs para la manipulación de la lista
 typedef struct elemento elemento_t;
 
-
-
 typedef enum
 {
   ELEM1_MAYOR_QUE_ELEM2,
