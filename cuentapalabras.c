@@ -67,11 +67,17 @@ void totales(multiset_t* mTodos)
     fclose(totales);
 }
 
-multiset_t* procesamiento_archivo(char* ruta, multiset_t* mTodos) //No testeé individual, me lo robé de mi TPB
+
+multiset_t* procesamiento_archivo(char* rutaDirectorio, char* nombreArchivo, multiset_t* mTodos) //No testeé individual, me lo robé de mi TPB
 {
     char linea[100] = "\0";
     char *puntero;
-    FILE *f = fopen(ruta, "r");
+    char rutaArchivo[200];
+
+    printf("%s\n", nombreArchivo);
+    snprintf(rutaArchivo, sizeof(rutaArchivo), "%s\\%s", rutaDirectorio, nombreArchivo);
+
+    FILE *f = fopen(rutaArchivo, "r");
 
     multiset_t* m = multiset_crear(); //En este multiset vamos a guardar todas las apariciones del archivo parametrizado.
 
@@ -131,17 +137,27 @@ lista_t* abrir_directorio(char* cadena) //OK
 
 int main()
 {
-    lista_t* archivos = abrir_directorio("C:\\Users\\mlpro\\Downloads\\Dir");
+    char* pathDirectorio = "C:\\Users\\mlpro\\OneDrive\\Documentos\\Universidad\\Computación\\Cursado actual\\Organización de Computadoras\\Código\\proyecto-orga2\\Dir";
+    lista_t* archivos = abrir_directorio(pathDirectorio);
     multiset_t* mTodos = multiset_crear();
     multiset_t* m;
     char* nombreArchivo;
+    int i;
 
-    for(int i = 0; archivos != NULL && i < lista_cantidad(archivos); i++)
+    lista_t l; //Borrar
+
+    for(i = 0; archivos != NULL && i < lista_cantidad(archivos); i++)
     {
         nombreArchivo = lista_elemento(archivos, i)->b;
-        m = procesamiento_archivo(nombreArchivo, mTodos);
-        cada_uno(m, nombreArchivo);
+        m = procesamiento_archivo(pathDirectorio, nombreArchivo, mTodos);
+        l = multiset_elementos(m, comparar_multiset);
+        for(int j = 0; j < lista_cantidad(&l); j++)
+            printf("%s", lista_elemento(&l, j)->b);
+        //cada_uno(m, nombreArchivo);
+        multiset_eliminar(&m);
     }
 
     totales(mTodos);
+    multiset_eliminar(&mTodos);
+    // Liberar espacio de la lista
 }
