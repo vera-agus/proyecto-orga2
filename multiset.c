@@ -88,6 +88,9 @@ lista_t multiset_elementos(multiset_t *m, int (*f)(elemento_t, elemento_t))
     char palabra[50] = ""; //Asumimos que cuanto mucho la palabra va a tener 50 caracteres; la inicializamos con nulo.
     preorden(m, palabra, to_return);
 
+    for(int i = 0; i < lista_cantidad(to_return); i++)
+        printf("%i %s\n", lista_elemento(to_return, i)->a, lista_elemento(to_return, i)->b);
+
     lista_ordenar(to_return, f);
 
     return *to_return;
@@ -96,9 +99,8 @@ lista_t multiset_elementos(multiset_t *m, int (*f)(elemento_t, elemento_t))
 void preorden(multiset_t *m, char* palabra, lista_t* l)
 {
     elemento_t elem;
-    elem.a = multiset_cantidad(m, palabra);
+    elem.a = m->cantidad;
     elem.b = palabra;
-    printf("%s aparece %i veces\n", elem.b, elem.a);
 
     if(m->cantidad > 0)
         lista_insertar(l, elem, 0);
