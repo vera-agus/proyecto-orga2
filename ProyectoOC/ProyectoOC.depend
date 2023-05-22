@@ -1,0 +1,43 @@
+# depslib dependency file v1.0
+1684717308 source:c:\users\mlpro\onedrive\documentos\universidad\computación\cursado actual\organización de computadoras\código\proyecto-orga2\proyectooc\main.c
+	<stdio.h>
+	<stdlib.h>
+
+1684720112 source:c:\users\mlpro\onedrive\documentos\universidad\computación\cursado actual\organización de computadoras\código\proyecto-orga2\proyectooc\multiset.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<ctype.h>
+	"define.h"
+	"multiset.h"
+	"listaordenada.h"
+
+1684720112 c:\users\mlpro\onedrive\documentos\universidad\computación\cursado actual\organización de computadoras\código\proyecto-orga2\proyectooc\multiset.h
+	"listaordenada.h"
+	"define.h"
+
+1684715728 source:c:\users\mlpro\onedrive\documentos\universidad\computación\cursado actual\organización de computadoras\código\proyecto-orga2\proyectooc\listaordenada.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"define.h"
+	"listaordenada.h"
+
+1684715467 c:\users\mlpro\onedrive\documentos\universidad\computación\cursado actual\organización de computadoras\código\proyecto-orga2\proyectooc\define.h
+
+1684715067 c:\users\mlpro\onedrive\documentos\universidad\computación\cursado actual\organización de computadoras\código\proyecto-orga2\proyectooc\listaordenada.h
+
+1684715728 c:\users\mlpro\onedrive\documentos\universidad\computación\cursado actual\organización de computadoras\código\proyecto-orga2\proyectooc\listaordenada.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"define.h"
+	"listaordenada.h"
+
+1684720359 source:c:\users\mlpro\onedrive\documentos\universidad\computación\cursado actual\organización de computadoras\código\proyecto-orga2\proyectooc\cuentapalabras.c
+	<stdio.h>
+	<stdlib.h>
+	<dirent.h>
+	"listaordenada.h"
+	"multiset.h"
+
