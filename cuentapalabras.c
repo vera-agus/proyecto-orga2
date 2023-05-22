@@ -7,6 +7,7 @@
 
 comparacion_resultado_t comparar(struct elemento* e1, struct elemento* e2) //¿ e1 < e2 ?
 {
+    printf("%i %s\n", e1->a, e1->b);
     int toReturn = e1->a == e2->a;
     if(toReturn == 1) //e1->a es igual que e2->a
     {
@@ -15,8 +16,15 @@ comparacion_resultado_t comparar(struct elemento* e1, struct elemento* e2) //¿ e
             toReturn = 0;
     }
     else
+    {
         toReturn = e1->a < e2->a;
+    }
     return toReturn;
+};
+
+int comparar_multiset(elemento_t e1, elemento_t e2)
+{
+    return comparar(&e1, &e2);
 };
 
 void cada_uno(multiset_t* mArchivo, char* nombreArchivo)
