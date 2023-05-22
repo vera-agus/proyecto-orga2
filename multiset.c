@@ -9,7 +9,7 @@
 
 // ---------------------------------------------------------------------
 
-// void preorden(multiset_t *m, char *palabra, lista_t* l);
+void preorden(multiset_t *m, char *palabra, lista_t* l);
 void destruir_elemento(void* elemento);
 void destruir(multiset_t *m, void (*destruir_elemento)(void*));
 
@@ -86,19 +86,19 @@ lista_t multiset_elementos(multiset_t *m, int (*f)(elemento_t, elemento_t))
 {
     lista_t* to_return = lista_crear();
     char palabra[50] = ""; //Asumimos que cuanto mucho la palabra va a tener 50 caracteres; la inicializamos con nulo.
-    //preorden(m, palabra, to_return);
+    preorden(m, palabra, to_return);
 
-    //lista_ordenar(to_return); ????????? que función parametrizamos y que peda con lo que está parametrizado acá
+    lista_ordenar(to_return, f);
 
     return *to_return;
 }
 
-/*
-void preorden(multiset_t *m, char *palabra, lista_t* l)
+void preorden(multiset_t *m, char* palabra, lista_t* l)
 {
     elemento_t elem;
     elem.a = multiset_cantidad(m, palabra);
     elem.b = palabra;
+    printf("%s aparece %i veces\n", elem.b, elem.a);
 
     if(m->cantidad > 0)
         lista_insertar(l, elem, 0);
@@ -119,7 +119,6 @@ void preorden(multiset_t *m, char *palabra, lista_t* l)
         }
     }
 }
-*/
 
 /**
  Elimina el multiset m liberando el espacio de memoria reservado. Luego de la invocación m debe valer NULL.
