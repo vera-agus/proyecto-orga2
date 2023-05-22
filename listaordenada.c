@@ -181,7 +181,7 @@ celda_t* merge(celda_t* a, celda_t* b, funcion_comparacion_t comparar)
     else if (b == NULL)
         return a;
 
-    if(comparar(&(a->elem), &(b->elem)))
+    if(comparar((a->elem), (b->elem)) == ELEM1_MENOR_QUE_ELEM2)
     {
         to_return = a;
         to_return->siguiente = merge(a->siguiente, b, comparar);

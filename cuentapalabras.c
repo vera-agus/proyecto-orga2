@@ -5,19 +5,30 @@
 #include "multiset.h"
 #define MAX_BUF 200
 
+/**
+ Compara los elementos e1 y e2 y retorna si e1 es mayor, igual o menor que e2 según el valor de sus atributo a y, de ser necesario, b.
+*/
 comparacion_resultado_t comparar(struct elemento* e1, struct elemento* e2) //¿ e1 < e2 ?
 {
-    printf("%i %s\n", e1->a, e1->b);
-    int toReturn = e1->a == e2->a;
-    if(toReturn == 1) //e1->a es igual que e2->a
+    int valorComparacion = e1->a == e2->a;
+    comparacion_resultado_t toReturn;
+    if(valorComparacion == 1) //e1->a es igual que e2->a
     {
-        toReturn = strcmp(e1->b, e2->b);
-        if(toReturn == 1)
-            toReturn = 0;
+        valorComparacion = strcmp(e1->b, e2->b);
+        if(valorComparacion == 0)
+            toReturn = ELEM1_IGUAL_QUE_ELEM2;
+        else if(valorComparacion == -1)
+            toReturn = ELEM1_MENOR_QUE_ELEM2;
+        else
+            toReturn = ELEM1_MAYOR_QUE_ELEM2;
     }
     else
     {
-        toReturn = e1->a < e2->a;
+        valorComparacion = e1->a < e2->a;
+        if(valorComparacion == 0)
+            toReturn = ELEM1_MAYOR_QUE_ELEM2;
+        else
+            toReturn = ELEM1_MENOR_QUE_ELEM2;
     }
     return toReturn;
 };
