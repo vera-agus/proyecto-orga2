@@ -11,11 +11,11 @@ typedef struct celda
 } c; // A la c la agregamos nosotros
 
 // PROTOTIPOS DE FUNCIONES AUXILIARES
-/*
+
 celda_t * merge(celda_t* a, celda_t* b, funcion_comparacion_t comparar);
 int mergeSort(celda_t** p, funcion_comparacion_t comparar);
 int dividir(celda_t* p, celda_t** ini, celda_t** fin);
-*/
+
 // --------------------------------------------------------------
 
 /**
@@ -142,14 +142,14 @@ elemento_t *lista_elemento(lista_t *l, unsigned int pos)
 /**
 Dada la lista l y la función comparar ordena la lista de acuerdo al criterio de dicha función.
 **/
-/*
+
 int lista_ordenar(lista_t *l, funcion_comparacion_t comparar)
 {
     void* p = &(l->primera);
     int to_return = mergeSort(p, comparar);
     return to_return;
 }
-*/
+
 /**
 Devuelve la cantidad de elementos de la lista l.
 **/
@@ -170,7 +170,7 @@ int lista_vacia(lista_t lista)
 }
 
 // --------------------------------------------------
-/*
+
 celda_t* merge(celda_t* a, celda_t* b, funcion_comparacion_t comparar)
 {
     celda_t* to_return = NULL;
@@ -247,4 +247,4 @@ int dividir(celda_t* p, celda_t** ini, celda_t** fin)
     p1->siguiente = NULL;
 
     return 0;
-} */
+} 

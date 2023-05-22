@@ -5,6 +5,20 @@
 #include "multiset.h"
 #define MAX_BUF 200
 
+comparacion_resultado_t comparar(struct elemento* e1, struct elemento* e2) //¿ e1 < e2 ?
+{
+    int toReturn = e1->a == e2->a;
+    if(toReturn == 1) //e1->a es igual que e2->a
+    {
+        toReturn = strcmp(e1->b, e2->b);
+        if(toReturn == 1)
+            toReturn = 0;
+    }
+    else
+        toReturn = e1->a < e2->a;
+    return toReturn;
+};
+
 void cada_uno(multiset_t* mArchivo, char* nombreArchivo)
 {
     FILE *cadauno = fopen("cadauno.out", "a+");
