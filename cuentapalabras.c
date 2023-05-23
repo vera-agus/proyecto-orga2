@@ -125,6 +125,7 @@ lista_t* abrir_directorio(char* cadena) //OK
         {
             elemento_t elem = {i, ent->d_name};
             error = lista_insertar(lista, elem, i);
+            i = i+1;
         }
         ent = readdir (dir);
     }
@@ -164,11 +165,7 @@ int main()
         multiset_eliminar(&m);
     }
 
-    lista_t l = multiset_elementos(mTodos, comparar_multiset);
-    for(int j = 0; j < lista_cantidad(&l) - 1; j++)
-        printf("%i %s: %i \n", lista_elemento(&l, j)->a, lista_elemento(&l, j)->b, j);
-
     totales(mTodos);
     multiset_eliminar(&mTodos);
-    // Liberar espacio de la lista
+    // Liberar espacio de la lista de archivos
 }
