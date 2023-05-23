@@ -38,65 +38,66 @@ int comparar_multiset(elemento_t e1, elemento_t e2)
     return comparar(&e1, &e2);
 };
 
-void cada_uno(multiset_t* mArchivo, char* nombreArchivo)
+void cada_uno(multiset_t* mArchivo, char* nombreArchivo) //Imprime el orden de los archivos al revés
 {
-    FILE *cadauno = fopen("cadauno.out", "a+");
-    lista_t l = multiset_elementos(mArchivo, NULL); //Cambiar NULL por la función de comparación
+    FILE *cadauno = fopen("cadauno.txt", "a+");
+    lista_t l = multiset_elementos(mArchivo, comparar_multiset);
     int i, cantidad;
     cantidad = lista_cantidad(&l);
     int aAux;
     char* bAux;
 
-    fprintf(cadauno, "%s", nombreArchivo);
+    fprintf(cadauno, "%s\n", nombreArchivo);
 
-    for(i = 0; i < cantidad; i++)
+    for(i = 0; i < cantidad - 1; i++) //Hasta cantidad porque sino incluye la cantidad total de elementos del multiset y no corresponde
     {
         aAux = lista_elemento(&l, i)->a;
         bAux = lista_elemento(&l, i)->b;
-        fprintf(cadauno, "%i   %s", aAux, bAux);
+        fprintf(cadauno, "%i   %s\n", aAux, bAux);
     }
 
     fclose(cadauno);
+    // Liberar espacio de la lista
 }
 
-void totales(multiset_t* mTodos)
+void totales(multiset_t* mTodos) //OK
 {
-    FILE *totales = fopen("totales.out", "a+");
-    lista_t l = multiset_elementos(mTodos, NULL); //Cambiar NULL por la función de comparación
+    FILE *totales = fopen("totales.txt", "w+");
+    lista_t l = multiset_elementos(mTodos, comparar_multiset);
     int i, cantidad;
     cantidad = lista_cantidad(&l);
     int aAux;
     char* bAux;
 
-    for(i = 0; i < cantidad; i++)
+    for(i = 0; i < cantidad - 1; i++) //Hasta cantidad porque sino incluye la cantidad total de elementos del multiset y no corresponde
     {
         aAux = lista_elemento(&l, i)->a;
         bAux = lista_elemento(&l, i)->b;
-        fprintf(totales, "%i   %s", aAux, bAux);
+        fprintf(totales, "%i   %s\n", aAux, bAux);
     }
 
     fclose(totales);
+    // Liberar espacio de la lista
 }
 
 
-multiset_t* procesamiento_archivo(char* rutaDirectorio, char* nombreArchivo, multiset_t* mTodos) //No testeé individual, me lo robé de mi TPB
+multiset_t* procesamiento_archivo(char* rutaDirectorio, char* nombreArchivo, multiset_t* mTodos) //OK
 {
     char linea[100] = "\0";
-    char *puntero;
     char rutaArchivo[200];
 
     printf("%s\n", nombreArchivo);
-    snprintf(rutaArchivo, sizeof(rutaArchivo), "%s\\%s", rutaDirectorio, nombreArchivo);
+    snprintf(rutaArchivo, sizeof(rutaArchivo), "%s\\%s", rutaDirectorio, nombreArchivo); //Hace un append al path del directorio con el nombre del archivo
 
     FILE *f = fopen(rutaArchivo, "r");
 
     multiset_t* m = multiset_crear(); //En este multiset vamos a guardar todas las apariciones del archivo parametrizado.
 
-    while(puntero != NULL)
+    while(!feof(f))
     {
+        fscanf(f,"%s", linea);
         multiset_insertar(m, linea);
         multiset_insertar(mTodos, linea);
-        puntero = fgets(linea,100,f);
     }
 
     fclose(f);
@@ -155,18 +156,17 @@ int main()
     char* nombreArchivo;
     int i;
 
-    lista_t l; //Borrar
-
     for(i = 0; archivos != NULL && i < lista_cantidad(archivos); i++)
     {
         nombreArchivo = lista_elemento(archivos, i)->b;
         m = procesamiento_archivo(pathDirectorio, nombreArchivo, mTodos);
-        l = multiset_elementos(m, comparar_multiset);
-        for(int j = 0; j < lista_cantidad(&l); j++)
-            printf("%s", lista_elemento(&l, j)->b);
-        //cada_uno(m, nombreArchivo);
+        cada_uno(m, nombreArchivo);
         multiset_eliminar(&m);
     }
+
+    lista_t l = multiset_elementos(mTodos, comparar_multiset);
+    for(int j = 0; j < lista_cantidad(&l) - 1; j++)
+        printf("%i %s: %i \n", lista_elemento(&l, j)->a, lista_elemento(&l, j)->b, j);
 
     totales(mTodos);
     multiset_eliminar(&mTodos);
