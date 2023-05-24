@@ -4,7 +4,7 @@
 #include <dirent.h>
 #include "listaordenada.h"
 #include "multiset.h"
-#define MAX_BUF 200
+#define MAX_BUF 60
 
 // BEGIN - Prototipos de funciones
 comparacion_resultado_t comparar(struct elemento* e1, struct elemento* e2);
@@ -13,28 +13,70 @@ void cada_uno(multiset_t* mArchivo, char* nombreArchivo);
 void totales(multiset_t* mTodos);
 multiset_t* procesamiento_archivo(char* rutaDirectorio, char* nombreArchivo, multiset_t* mTodos);
 lista_t* abrir_directorio(char* cadena);
+void printGuiones();
 // END - Prototipos de funciones
 
-int main()
+int main(int argc, char* argv[])
 {
-    char* pathDirectorio = "C:\\Users\\mlpro\\OneDrive\\Documentos\\Universidad\\Computación\\Cursado actual\\Organización de Computadoras\\Código\\proyecto-orga2\\Dir";
-    lista_t* archivos = abrir_directorio(pathDirectorio);
-    multiset_t* mTodos = multiset_crear();
-    multiset_t* m;
-    char* nombreArchivo;
-    int i;
+    char opcion;
 
-    for(i = 0; archivos != NULL && i < lista_cantidad(archivos); i++)
+    if(argc == 0 || (argc == 1 && strcmp(argv[0], "-h") == 0))
     {
-        nombreArchivo = lista_elemento(archivos, i)->b;
-        m = procesamiento_archivo(pathDirectorio, nombreArchivo, mTodos);
-        cada_uno(m, nombreArchivo);
-        multiset_eliminar(&m);
+        printf("Bienvenido a cuentapalabras!\n\n");
+
+        printf("Este es un programa que le permitira contabilizar la cantidad de palabras contenidas en los archivos ");
+        printf("de texto de un directorio especificado.\n");
+
+        printf("A partir de la lectura de cada uno de los archivos de texto alojados en el directorio, se crearan otros ");
+        printf("con el fin de que pueda determinar la cantidad total de veces que se encuentra cada palabra ");
+        printf("(en total y por cada uno de los archivos).\n\n");
+
+        printf("Si desea mayor informacion sobre las opciones disponibles presione Y, caso contrario presione N\n");
+        printf("Y/N: ");
+        scanf("%[^\n]", &opcion);
+
+        if(opcion == 'y' || opcion == 'Y')
+        {
+            printf("\nESPECIFICACIONES SOBRE TOTALES\n\n");
+
+            printf("A partir del directorio que proporcione, considerando los archivos de texto que el mismo contenga, ");
+            printf("se creara un nuevo archivo conteniendo todas las palabras existentes entre los archivos y, ");
+            printf("el nuevo archivo, contendra dichas palabras con la cantidad de apariciones totales entre todos ");
+            printf("todos los archivos de texto que existen en la carpeta.\n");
+            printf("Las palabras y sus respectivas cantidades se encuentran ordenadas segun la cantidad de apariciones.\n");
+
+            printf("\nESPECIFICACIONES SOBRE CADA UNO\n\n");
+
+            printf("A partir del directorio que proporcione, considerando los archivos de texto que el mismo contenga, ");
+            printf("se creara un nuevo archivo conteniendo la cantidad de veces que aparece cada palabra en cada ");
+            printf("uno de los archivos.\n");
+            printf("Las palabras y sus respectivas cantidades se encuentran ordenadas segun la cantidad de apariciones.\n");
+        }
+        printf("\nEsperamos que la ayuda le haya sido de utilidad.\nHasta pronto!\n");
+    }
+    else
+    {
+        char* pathDirectorio = "C:\\Users\\mlpro\\OneDrive\\Documentos\\Universidad\\Computación\\Cursado actual\\Organización de Computadoras\\Código\\proyecto-orga2\\Dir";
+        lista_t* archivos = abrir_directorio(pathDirectorio);
+        multiset_t* mTodos = multiset_crear();
+        multiset_t* m;
+        char* nombreArchivo;
+        int i;
+
+        for(i = 0; archivos != NULL && i < lista_cantidad(archivos); i++)
+        {
+            nombreArchivo = lista_elemento(archivos, i)->b;
+            m = procesamiento_archivo(pathDirectorio, nombreArchivo, mTodos);
+            cada_uno(m, nombreArchivo);
+            multiset_eliminar(&m);
+        }
+
+        totales(mTodos);
+        multiset_eliminar(&mTodos);
+        // Liberar espacio de la lista de archivos
     }
 
-    totales(mTodos);
-    multiset_eliminar(&mTodos);
-    // Liberar espacio de la lista de archivos
+    return 0;
 }
 
 /**
