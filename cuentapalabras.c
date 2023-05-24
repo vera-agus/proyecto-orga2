@@ -1,9 +1,41 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <dirent.h>
 #include "listaordenada.h"
 #include "multiset.h"
 #define MAX_BUF 200
+
+// BEGIN - Prototipos de funciones
+comparacion_resultado_t comparar(struct elemento* e1, struct elemento* e2);
+int comparar_multiset(elemento_t e1, elemento_t e2);
+void cada_uno(multiset_t* mArchivo, char* nombreArchivo);
+void totales(multiset_t* mTodos);
+multiset_t* procesamiento_archivo(char* rutaDirectorio, char* nombreArchivo, multiset_t* mTodos);
+lista_t* abrir_directorio(char* cadena);
+// END - Prototipos de funciones
+
+int main()
+{
+    char* pathDirectorio = "C:\\Users\\mlpro\\OneDrive\\Documentos\\Universidad\\Computación\\Cursado actual\\Organización de Computadoras\\Código\\proyecto-orga2\\Dir";
+    lista_t* archivos = abrir_directorio(pathDirectorio);
+    multiset_t* mTodos = multiset_crear();
+    multiset_t* m;
+    char* nombreArchivo;
+    int i;
+
+    for(i = 0; archivos != NULL && i < lista_cantidad(archivos); i++)
+    {
+        nombreArchivo = lista_elemento(archivos, i)->b;
+        m = procesamiento_archivo(pathDirectorio, nombreArchivo, mTodos);
+        cada_uno(m, nombreArchivo);
+        multiset_eliminar(&m);
+    }
+
+    totales(mTodos);
+    multiset_eliminar(&mTodos);
+    // Liberar espacio de la lista de archivos
+}
 
 /**
  Compara los elementos e1 y e2 y retorna si e1 es mayor, igual o menor que e2 según el valor de sus atributo a y, de ser necesario, b.
@@ -38,7 +70,7 @@ int comparar_multiset(elemento_t e1, elemento_t e2)
     return comparar(&e1, &e2);
 };
 
-void cada_uno(multiset_t* mArchivo, char* nombreArchivo) //Imprime el orden de los archivos al revés
+void cada_uno(multiset_t* mArchivo, char* nombreArchivo) //OK
 {
     FILE *cadauno = fopen("cadauno.txt", "a+");
     lista_t l = multiset_elementos(mArchivo, comparar_multiset);
@@ -80,7 +112,6 @@ void totales(multiset_t* mTodos) //OK
     // Liberar espacio de la lista
 }
 
-
 multiset_t* procesamiento_archivo(char* rutaDirectorio, char* nombreArchivo, multiset_t* mTodos) //OK
 {
     char linea[100] = "\0";
@@ -90,6 +121,8 @@ multiset_t* procesamiento_archivo(char* rutaDirectorio, char* nombreArchivo, mul
     snprintf(rutaArchivo, sizeof(rutaArchivo), "%s\\%s", rutaDirectorio, nombreArchivo); //Hace un append al path del directorio con el nombre del archivo
 
     FILE *f = fopen(rutaArchivo, "r");
+    if(f == NULL)
+        exit(ARCH_ERROR_APERTURA);
 
     multiset_t* m = multiset_crear(); //En este multiset vamos a guardar todas las apariciones del archivo parametrizado.
 
@@ -144,28 +177,6 @@ lista_t* abrir_directorio(char* cadena) //OK
   else
   {
     perror("No se pudo acceder al directorio");
-    return NULL;
+    exit(DIR_ERROR_APERTURA);
   }
-}
-
-int main()
-{
-    char* pathDirectorio = "C:\\Users\\mlpro\\OneDrive\\Documentos\\Universidad\\Computación\\Cursado actual\\Organización de Computadoras\\Código\\proyecto-orga2\\Dir";
-    lista_t* archivos = abrir_directorio(pathDirectorio);
-    multiset_t* mTodos = multiset_crear();
-    multiset_t* m;
-    char* nombreArchivo;
-    int i;
-
-    for(i = 0; archivos != NULL && i < lista_cantidad(archivos); i++)
-    {
-        nombreArchivo = lista_elemento(archivos, i)->b;
-        m = procesamiento_archivo(pathDirectorio, nombreArchivo, mTodos);
-        cada_uno(m, nombreArchivo);
-        multiset_eliminar(&m);
-    }
-
-    totales(mTodos);
-    multiset_eliminar(&mTodos);
-    // Liberar espacio de la lista de archivos
 }

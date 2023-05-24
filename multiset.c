@@ -1,149 +1,182 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-
-#include "define.h"
-#include "multiset.h"
+#include <dirent.h>
 #include "listaordenada.h"
+#include "multiset.h"
+#define MAX_BUF 200
 
-// ---------------------------------------------------------------------
+// BEGIN - Prototipos de funciones
+comparacion_resultado_t comparar(struct elemento* e1, struct elemento* e2);
+int comparar_multiset(elemento_t e1, elemento_t e2);
+void cada_uno(multiset_t* mArchivo, char* nombreArchivo);
+void totales(multiset_t* mTodos);
+multiset_t* procesamiento_archivo(char* rutaDirectorio, char* nombreArchivo, multiset_t* mTodos);
+lista_t* abrir_directorio(char* cadena);
+// END - Prototipos de funciones
 
-void preorden(multiset_t *m, char *palabra, lista_t* l);
-void destruir_elemento(void* elemento);
-void destruir(multiset_t *m, void (*destruir_elemento)(void*));
-
-// ---------------------------------------------------------------------
-
-struct trie
+int main()
 {
-  int cantidad; // Cantidad de veces que aparece esa palabra en el multiset
-  struct trie *siguiente[26];
+    char* pathDirectorio = "C:\\Users\\mlpro\\OneDrive\\Documentos\\Universidad\\Computación\\Cursado actual\\Organización de Computadoras\\Código\\proyecto-orga2\\Dir";
+    lista_t* archivos = abrir_directorio(pathDirectorio);
+    multiset_t* mTodos = multiset_crear();
+    multiset_t* m;
+    char* nombreArchivo;
+    int i;
+
+    for(i = 0; archivos != NULL && i < lista_cantidad(archivos); i++)
+    {
+        nombreArchivo = lista_elemento(archivos, i)->b;
+        m = procesamiento_archivo(pathDirectorio, nombreArchivo, mTodos);
+        cada_uno(m, nombreArchivo);
+        multiset_eliminar(&m);
+    }
+
+    totales(mTodos);
+    multiset_eliminar(&mTodos);
+    // Liberar espacio de la lista de archivos
+}
+
+/**
+ Compara los elementos e1 y e2 y retorna si e1 es mayor, igual o menor que e2 según el valor de sus atributo a y, de ser necesario, b.
+*/
+comparacion_resultado_t comparar(struct elemento* e1, struct elemento* e2) //¿ e1 < e2 ?
+{
+    int valorComparacion = e1->a == e2->a;
+    comparacion_resultado_t toReturn;
+    if(valorComparacion == 1) //e1->a es igual que e2->a
+    {
+        valorComparacion = strcmp(e1->b, e2->b);
+        if(valorComparacion == 0)
+            toReturn = ELEM1_IGUAL_QUE_ELEM2;
+        else if(valorComparacion == -1)
+            toReturn = ELEM1_MENOR_QUE_ELEM2;
+        else
+            toReturn = ELEM1_MAYOR_QUE_ELEM2;
+    }
+    else
+    {
+        valorComparacion = e1->a < e2->a;
+        if(valorComparacion == 0)
+            toReturn = ELEM1_MAYOR_QUE_ELEM2;
+        else
+            toReturn = ELEM1_MENOR_QUE_ELEM2;
+    }
+    return toReturn;
 };
-//Metodos de TDA multiset.
 
-/**
- Crea un multiset vacío de palabras y lo devuelve.
-**/
-multiset_t *multiset_crear()
+int comparar_multiset(elemento_t e1, elemento_t e2)
 {
-    multiset_t *multiset = (multiset_t*) malloc(sizeof(struct trie));
-    multiset->cantidad = 0;
+    return comparar(&e1, &e2);
+};
 
-    int i;
-    for(i = 0; i < 26; i++)
-        multiset->siguiente[i] = NULL;
-
-    return multiset;
-}
-
-/**
- Inserta la palabra s al multiset m.
-**/
-void multiset_insertar(multiset_t *m, char *s)
+void cada_uno(multiset_t* mArchivo, char* nombreArchivo) //OK
 {
-    int l = strlen(s);
-    int pos;
-    multiset_t* multisetActual = m;
+    FILE *cadauno = fopen("cadauno.txt", "a+");
+    lista_t l = multiset_elementos(mArchivo, comparar_multiset);
+    int i, cantidad;
+    cantidad = lista_cantidad(&l);
+    int aAux;
+    char* bAux;
 
-    int i;
-    for(i = 0; i < l; i++)
+    fprintf(cadauno, "%s\n", nombreArchivo);
+
+    for(i = 0; i < cantidad - 1; i++) //Hasta cantidad porque sino incluye la cantidad total de elementos del multiset y no corresponde
     {
-        pos = tolower(s[i]) - 'a'; //Unificamos codificación para efectivizar el mapeo de caracteres a números
-        if(multisetActual->siguiente[pos] == NULL)
-            multisetActual->siguiente[pos] = multiset_crear(); //Porque va descubriendo nuevas ramas del arbol.
-        multisetActual = multisetActual->siguiente[pos];
+        aAux = lista_elemento(&l, i)->a;
+        bAux = lista_elemento(&l, i)->b;
+        fprintf(cadauno, "%i   %s\n", aAux, bAux);
     }
-    multisetActual->cantidad = multisetActual->cantidad + 1;
-    m->cantidad = m->cantidad + 1;
+
+    fclose(cadauno);
+    // Liberar espacio de la lista
 }
 
-/**
- Devuelve la cantidad de repeticiones de la palabra s en el multiset m.
-**/
-int multiset_cantidad(multiset_t *m, char *s)
+void totales(multiset_t* mTodos) //OK
 {
-    int l = strlen(s);
-    int i, pos;
-    multiset_t* p = m;
+    FILE *totales = fopen("totales.txt", "w+");
+    lista_t l = multiset_elementos(mTodos, comparar_multiset);
+    int i, cantidad;
+    cantidad = lista_cantidad(&l);
+    int aAux;
+    char* bAux;
 
-    for(i = 0; i < l; i++)
+    for(i = 0; i < cantidad - 1; i++) //Hasta cantidad porque sino incluye la cantidad total de elementos del multiset y no corresponde
     {
-        pos = tolower(s[i]) - 'a';
-        if(p->siguiente[pos] == NULL)
-            return 0;
-        p = p->siguiente[pos];
+        aAux = lista_elemento(&l, i)->a;
+        bAux = lista_elemento(&l, i)->b;
+        fprintf(totales, "%i   %s\n", aAux, bAux);
     }
-    return p->cantidad;
+
+    fclose(totales);
+    // Liberar espacio de la lista
 }
 
-/**
- Devuelve una lista de tipo lista t ordenada según la función f con todos los elementos del multiset m y la cantidad de apariciones de cada uno.
-**/
-
-
-lista_t multiset_elementos(multiset_t *m, int (*f)(elemento_t, elemento_t))
+multiset_t* procesamiento_archivo(char* rutaDirectorio, char* nombreArchivo, multiset_t* mTodos) //OK
 {
-    lista_t* to_return = lista_crear();
-    char palabra[50] = ""; //Asumimos que cuanto mucho la palabra va a tener 50 caracteres; la inicializamos con nulo.
-    preorden(m, palabra, to_return);
+    char linea[100] = "\0";
+    char rutaArchivo[200];
 
-    for(int i = 0; i < lista_cantidad(to_return); i++)
-        printf("%i %s\n", lista_elemento(to_return, i)->a, lista_elemento(to_return, i)->b);
+    printf("%s\n", nombreArchivo);
+    snprintf(rutaArchivo, sizeof(rutaArchivo), "%s\\%s", rutaDirectorio, nombreArchivo); //Hace un append al path del directorio con el nombre del archivo
 
-    lista_ordenar(to_return, f);
+    FILE *f = fopen(rutaArchivo, "r");
+    if(f == NULL)
+        exit(ARCH_ERROR_APERTURA);
 
-    return *to_return;
-}
+    multiset_t* m = multiset_crear(); //En este multiset vamos a guardar todas las apariciones del archivo parametrizado.
 
-void preorden(multiset_t *m, char* palabra, lista_t* l)
-{
-    elemento_t elem;
-    elem.a = m->cantidad;
-    elem.b = palabra;
-
-    if(m->cantidad > 0)
-        lista_insertar(l, elem, 0);
-
-    int i, longi;
-    char c;
-
-    for(i = 0; i < 26; i++)
+    while(!feof(f))
     {
-        if(m->siguiente[i] != NULL)
+        fscanf(f,"%s", linea);
+        multiset_insertar(m, linea);
+        multiset_insertar(mTodos, linea);
+    }
+
+    fclose(f);
+
+    return m;
+}
+
+lista_t* abrir_directorio(char* cadena) //OK
+{
+  DIR *dir;
+  struct dirent *ent;
+  lista_t* lista = lista_crear();
+  int i = 0;
+  int cantidad;
+  int error = 0;
+
+  dir = opendir (cadena);
+
+  if (dir != NULL)
+  {
+    ent = readdir (dir);
+    while (ent!= NULL)
+    {       // Verifica que el archivo a procesar no es invalido
+        if ((strcmp(ent->d_name, ".")!=0) && (strcmp(ent->d_name, "..")!=0))
         {
-            c = 'a' + i;
-            longi = strlen(palabra);
-            palabra[longi] = c;
-            palabra[longi+1] = '\0';
-            preorden(m->siguiente[i], palabra, l);
-            palabra[longi] = '\0';
+            elemento_t elem = {i, ent->d_name};
+            error = lista_insertar(lista, elem, i);
+            i = i+1;
         }
+        ent = readdir (dir);
     }
-}
+    closedir (dir);
 
-/**
- Elimina el multiset m liberando el espacio de memoria reservado. Luego de la invocación m debe valer NULL.
-**/
-void multiset_eliminar(multiset_t **m)
-{
-    destruir(*m, destruir_elemento);
-    *m = NULL;
-}
-
-void destruir(multiset_t *m, void (*destruir_elemento)(void*))
-{
-    int i;
-    if(m != NULL)
+    if(error != 0)
     {
-        for(i = 0; i < 26; i++)
-            destruir(m->siguiente[i], destruir_elemento);
-
-        free(m);
+        cantidad = lista_cantidad(lista);
+        for(i = 0; i < cantidad; i++)
+            lista_eliminar(lista, 0);
+        free(lista);
+        lista = NULL;
     }
-}
-
-void destruir_elemento(void* elemento)
-{
-    free(elemento);
+    return lista;
+  }
+  else
+  {
+    perror("No se pudo acceder al directorio");
+    exit(DIR_ERROR_APERTURA);
+  }
 }

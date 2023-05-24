@@ -10,16 +10,16 @@ typedef struct celda
     struct celda *siguiente;
 } c; // A la c la agregamos nosotros
 
-// PROTOTIPOS DE FUNCIONES AUXILIARES
-
+// BEGIN - PROTOTIPOS DE FUNCIONES AUXILIARES
 celda_t * merge(celda_t* a, celda_t* b, funcion_comparacion_t comparar);
 int mergeSort(celda_t** p, funcion_comparacion_t comparar);
 int dividir(celda_t* p, celda_t** ini, celda_t** fin);
+// END - PROTOTIPOS DE FUNCIONES AUXILIARES
 
 // --------------------------------------------------------------
 
 /**
- Inicializa una lista vacía.
+ Inicializa una lista vacía y la retorna.
 **/
 lista_t * lista_crear()
 {
@@ -34,15 +34,15 @@ lista_t * lista_crear()
  Asumimos:
     Se crea una nueva celda con el elemento dentro, y se asigna en la posicion ingresada.
     La primer posicion en la lista es 0.
-    La posicion ingresada debe estar en el rango de 0  a l->cant.
+    La posicion ingresada debe estar en el rango de 0 a l->cant.
 **/
 int lista_insertar(lista_t *l, elemento_t elem, unsigned int pos)
 {
     if (pos > l->cantidad)
        exit(LST_POS_INVALIDA);
     //deberiamos verificar si el elemento pasado por parametro no tenga a o b nulos.
-    celda_t *nueva_celda= (celda_t*)malloc(sizeof(struct celda)); //Luego deberia ser liberado en el Eliminar.
-    elemento_t *elemento= (elemento_t*)malloc(sizeof(struct elemento));
+    celda_t *nueva_celda = (celda_t*)malloc(sizeof(struct celda)); //Luego deberia ser liberado en el Eliminar.
+    elemento_t *elemento = (elemento_t*)malloc(sizeof(struct elemento));
     elemento->b = (char*)malloc(strlen(elem.b) + 1);
     elemento->a = elem.a;
     strcpy(elemento->b, elem.b);
@@ -83,9 +83,6 @@ int lista_insertar(lista_t *l, elemento_t elem, unsigned int pos)
 
 /**
 Elimina el elemento de la posición pos de la lista.
----------------------------
-La catedra va a modificar el enunciado para que no tengamos que guardar memomaria para el elemnto retornado.
----------------------------
 **/
 elemento_t * lista_eliminar(lista_t* l, unsigned int pos) {
     if (l == NULL || l->primera == NULL || pos > l->cantidad) {
@@ -142,7 +139,6 @@ elemento_t *lista_elemento(lista_t *l, unsigned int pos)
 /**
 Dada la lista l y la función comparar ordena la lista de acuerdo al criterio de dicha función.
 **/
-
 int lista_ordenar(lista_t *l, funcion_comparacion_t comparar)
 {
     void* p = &(l->primera);
@@ -171,6 +167,13 @@ int lista_vacia(lista_t lista)
 
 // --------------------------------------------------
 
+/**
+  Realiza merge de dos listas enlazadas a y b, ordenando los elementos en función de un criterio de comparación proporcionado.
+    a: Puntero a la cabeza de la primera lista enlazada.
+    b: Puntero a la cabeza de la segunda lista enlazada.
+    comparar: Función de comparación que compara dos elementos y devuelve un valor que indica la relación de orden entre ellos.
+  Retorna un puntero a la cabeza de la lista enlazada resultante de aplicar merge.
+*/
 celda_t* merge(celda_t* a, celda_t* b, funcion_comparacion_t comparar)
 {
     celda_t* to_return = NULL;
@@ -195,6 +198,12 @@ celda_t* merge(celda_t* a, celda_t* b, funcion_comparacion_t comparar)
     return to_return;
 }
 
+/**
+  Realiza el merge sort en una lista, utilizando la función de comparación para comparar los elementos. Ordena la lista en su lugar, reordenando los punteros.
+    p: Puntero a un puntero a la cabeza de la lista enlazada a ordenar.
+    comparar: Función de comparación que compara dos elementos y devuelve un valor que indica la relación de orden entre ellos.
+  Retorna un entero que indica el éxito del proceso de ordenamiento.
+*/
 int mergeSort(celda_t** p, funcion_comparacion_t comparar)
 {
     celda_t* a;
@@ -217,6 +226,13 @@ int mergeSort(celda_t** p, funcion_comparacion_t comparar)
     return 0;
 }
 
+/**
+  Divide una lista en dos mitades, utilizando merge sort. Actualiza los punteros ini y fin para señalar el inicio y el final de las mitades divididas.
+    p: Puntero a la cabeza de la lista enlazada a dividir.
+    ini: Puntero a un puntero para almacenar la cabeza de la primera mitad dividida.
+    fin: Puntero a un puntero para almacenar la cabeza de la segunda mitad dividida.
+  Retorna un entero que indica el éxito o error del proceso de división.
+*/
 int dividir(celda_t* p, celda_t** ini, celda_t** fin)
 {
     // si la longitud es menor a 2, manejarlo por separado
@@ -247,4 +263,4 @@ int dividir(celda_t* p, celda_t** ini, celda_t** fin)
     p1->siguiente = NULL;
 
     return 0;
-} 
+}
