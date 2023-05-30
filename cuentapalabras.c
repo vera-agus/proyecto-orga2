@@ -21,6 +21,7 @@ int main(int argc, char* argv[])
 {
     char opcion;
 
+    //argc == 1 implica que no se incluye ningún otro parámetro más allá de la invocación del programa
     if(argc == 1 || (argc == 2 && strcmp(argv[1], "-h") == 0))
     {
         printf("Bienvenido a cuentapalabras!\n\n");
