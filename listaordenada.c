@@ -4,11 +4,11 @@
 #include "define.h"
 #include "listaordenada.h"
 
-typedef struct celda
+struct celda
 {
     elemento_t *elem;
     struct celda *siguiente;
-} c; // A la c la agregamos nosotros
+};
 
 // BEGIN - PROTOTIPOS DE FUNCIONES AUXILIARES
 celda_t * merge(celda_t* a, celda_t* b, funcion_comparacion_t comparar);

@@ -30,7 +30,7 @@ extern void multiset_insertar(multiset_t *m, char *s);
 extern int multiset_cantidad(multiset_t *m, char *s);
 
 /**
- Devuelve una lista de tipo lista t ordenada según la función f con todos los elementos del multiset m y la cantidad de apariciones de cada uno.
+ Devuelve una lista de tipo lista t con todos los elementos del multiset m y la cantidad de apariciones de cada uno.
 **/
 extern lista_t multiset_elementos(multiset_t *m, int (*f)(elemento_t, elemento_t));
 
