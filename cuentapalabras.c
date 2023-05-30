@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 {
     char opcion;
 
-    if(argc == 0 || (argc == 1 && strcmp(argv[0], "-h") == 0))
+    if(argc == 1 || (argc == 2 && strcmp(argv[1], "-h") == 0))
     {
         printf("Bienvenido a cuentapalabras!\n\n");
 
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        char* pathDirectorio = argv[0];
+        char* pathDirectorio = argv[1];
         //char* pathDirectorio = "C:\\Users\\mlpro\\OneDrive\\Documentos\\Universidad\\Computación\\Cursado actual\\Organización de Computadoras\\Código\\proyecto-orga2\\Dir";
         lista_t* archivos = abrir_directorio(pathDirectorio);
         multiset_t* mTodos = multiset_crear();
