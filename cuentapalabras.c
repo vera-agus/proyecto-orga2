@@ -59,8 +59,7 @@ int main(int argc, char* argv[])
     else
     {
         char* pathDirectorio = argv[1];
-        //char* pathDirectorio = "C:\\Users\\mlpro\\OneDrive\\Documentos\\Universidad\\Computación\\Cursado actual\\Organización de Computadoras\\Código\\proyecto-orga2\\Dir";
-        lista_t* archivos = abrir_directorio(pathDirectorio);
+	lista_t* archivos = abrir_directorio(pathDirectorio);
         multiset_t* mTodos = multiset_crear();
         multiset_t* m;
         char* nombreArchivo;
