@@ -14,6 +14,7 @@ void totales(multiset_t* mTodos);
 multiset_t* procesamiento_archivo(char* rutaDirectorio, char* nombreArchivo, multiset_t* mTodos);
 lista_t* abrir_directorio(char* cadena);
 void printGuiones();
+void eliminarLista(lista_t* lista);
 // END - Prototipos de funciones
 
 int main(int argc, char* argv[])
@@ -75,6 +76,7 @@ int main(int argc, char* argv[])
         totales(mTodos);
         multiset_eliminar(&mTodos);
         // Liberar espacio de la lista de archivos
+        eliminarLista(archivos);
     }
 
     return 0;
@@ -133,6 +135,7 @@ void cada_uno(multiset_t* mArchivo, char* nombreArchivo) //OK
 
     fclose(cadauno);
     // Liberar espacio de la lista
+    eliminarLista(&l);
 }
 
 void totales(multiset_t* mTodos) //OK
@@ -187,7 +190,6 @@ lista_t* abrir_directorio(char* cadena) //OK
   struct dirent *ent;
   lista_t* lista = lista_crear();
   int i = 0;
-  int cantidad;
   int error = 0;
 
   dir = opendir (cadena);
@@ -209,11 +211,14 @@ lista_t* abrir_directorio(char* cadena) //OK
 
     if(error != 0)
     {
+        /*)
         cantidad = lista_cantidad(lista);
         for(i = 0; i < cantidad; i++)
             lista_eliminar(lista, 0);
         free(lista);
         lista = NULL;
+        */
+        eliminarLista(lista);
     }
     return lista;
   }
@@ -222,4 +227,20 @@ lista_t* abrir_directorio(char* cadena) //OK
     perror("No se pudo acceder al directorio");
     exit(DIR_ERROR_APERTURA);
   }
+}
+
+void eliminarLista(lista_t* lista)
+{
+    int cantidad = lista_cantidad(lista);
+    int i;
+    elemento_t* elementoEliminado;
+
+    for(i = 0; i < cantidad; i++)
+    {
+        elementoEliminado = lista_eliminar(lista, 0);
+        free(elementoEliminado);
+    }
+
+    free(lista);
+    lista = NULL;
 }
