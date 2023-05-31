@@ -15,51 +15,23 @@ multiset_t* procesamiento_archivo(char* rutaDirectorio, char* nombreArchivo, mul
 lista_t* abrir_directorio(char* cadena);
 void printGuiones();
 void eliminarLista(lista_t* lista);
+void mostrarAyuda();
 // END - Prototipos de funciones
 
 int main(int argc, char* argv[])
 {
-    char opcion;
+    printf("%d %s %s", argc, argv[0], argv[1]);
 
-    //argc == 1 implica que no se incluye ningún otro parámetro más allá de la invocación del programa
     if(argc == 1 || (argc == 2 && strcmp(argv[1], "-h") == 0))
     {
-        printf("Bienvenido a cuentapalabras!\n\n");
-
-        printf("Este es un programa que le permitira contabilizar la cantidad de palabras contenidas en los archivos ");
-        printf("de texto de un directorio especificado.\n");
-
-        printf("A partir de la lectura de cada uno de los archivos de texto alojados en el directorio, se crearan otros ");
-        printf("con el fin de que pueda determinar la cantidad total de veces que se encuentra cada palabra ");
-        printf("(en total y por cada uno de los archivos).\n\n");
-
-        printf("Si desea mayor informacion sobre las opciones disponibles presione Y, caso contrario presione N\n");
-        printf("Y/N: ");
-        scanf("%[^\n]", &opcion);
-
-        if(opcion == 'y' || opcion == 'Y')
-        {
-            printf("\nESPECIFICACIONES SOBRE TOTALES\n\n");
-
-            printf("A partir del directorio que proporcione, considerando los archivos de texto que el mismo contenga, ");
-            printf("se creara un nuevo archivo conteniendo todas las palabras existentes entre los archivos y, ");
-            printf("el nuevo archivo, contendra dichas palabras con la cantidad de apariciones totales entre todos ");
-            printf("todos los archivos de texto que existen en la carpeta.\n");
-            printf("Las palabras y sus respectivas cantidades se encuentran ordenadas segun la cantidad de apariciones.\n");
-
-            printf("\nESPECIFICACIONES SOBRE CADA UNO\n\n");
-
-            printf("A partir del directorio que proporcione, considerando los archivos de texto que el mismo contenga, ");
-            printf("se creara un nuevo archivo conteniendo la cantidad de veces que aparece cada palabra en cada ");
-            printf("uno de los archivos.\n");
-            printf("Las palabras y sus respectivas cantidades se encuentran ordenadas segun la cantidad de apariciones.\n");
-        }
-        printf("\nEsperamos que la ayuda le haya sido de utilidad.\nHasta pronto!\n");
+        mostrarAyuda();
     }
     else
     {
-        char* pathDirectorio = argv[1];
-	lista_t* archivos = abrir_directorio(pathDirectorio);
+        char* pathDirectorio = "C:\\Users\\mlpro\\Downloads\\Dir";
+	    //char* pathDirectorio = argv[1];
+        //char* pathDirectorio = "C:\\Users\\mlpro\\OneDrive\\Documentos\\Universidad\\Computación\\Cursado actual\\Organización de Computadoras\\Código\\proyecto-orga2\\Dir";
+        lista_t* archivos = abrir_directorio(pathDirectorio);
         multiset_t* mTodos = multiset_crear();
         multiset_t* m;
         char* nombreArchivo;
@@ -69,8 +41,11 @@ int main(int argc, char* argv[])
         {
             nombreArchivo = lista_elemento(archivos, i)->b;
             m = procesamiento_archivo(pathDirectorio, nombreArchivo, mTodos);
-            cada_uno(m, nombreArchivo);
-            multiset_eliminar(&m);
+            if(m != NULL)
+            {
+                cada_uno(m, nombreArchivo);
+                multiset_eliminar(&m);
+            }
         }
 
         totales(mTodos);
@@ -117,7 +92,7 @@ int comparar_multiset(elemento_t e1, elemento_t e2)
 
 void cada_uno(multiset_t* mArchivo, char* nombreArchivo) //OK
 {
-    FILE *cadauno = fopen("cadauno.txt", "a+");
+    FILE *cadauno = fopen("cadauno.out", "a+");
     lista_t l = multiset_elementos(mArchivo, comparar_multiset);
     int i, cantidad;
     cantidad = lista_cantidad(&l);
@@ -140,7 +115,7 @@ void cada_uno(multiset_t* mArchivo, char* nombreArchivo) //OK
 
 void totales(multiset_t* mTodos) //OK
 {
-    FILE *totales = fopen("totales.txt", "w+");
+    FILE *totales = fopen("totales.out", "w+");
     lista_t l = multiset_elementos(mTodos, comparar_multiset);
     int i, cantidad;
     cantidad = lista_cantidad(&l);
@@ -163,25 +138,29 @@ multiset_t* procesamiento_archivo(char* rutaDirectorio, char* nombreArchivo, mul
     char linea[100] = "\0";
     char rutaArchivo[200];
 
-    printf("%s\n", nombreArchivo);
-    snprintf(rutaArchivo, sizeof(rutaArchivo), "%s\\%s", rutaDirectorio, nombreArchivo); //Hace un append al path del directorio con el nombre del archivo
-
-    FILE *f = fopen(rutaArchivo, "r");
-    if(f == NULL)
-        exit(ARCH_ERROR_APERTURA);
-
-    multiset_t* m = multiset_crear(); //En este multiset vamos a guardar todas las apariciones del archivo parametrizado.
-
-    while(!feof(f))
+    if(strstr(nombreArchivo, ".txt"))
     {
-        fscanf(f,"%s", linea);
-        multiset_insertar(m, linea);
-        multiset_insertar(mTodos, linea);
+        snprintf(rutaArchivo, sizeof(rutaArchivo), "%s\\%s", rutaDirectorio, nombreArchivo); //Hace un append al path del directorio con el nombre del archivo
+
+        FILE *f = fopen(rutaArchivo, "r");
+        if(f == NULL)
+            exit(ARCH_ERROR_APERTURA);
+
+        multiset_t* m = multiset_crear(); //En este multiset vamos a guardar todas las apariciones del archivo parametrizado.
+
+        while(!feof(f))
+        {
+            fscanf(f,"%s", linea);
+            multiset_insertar(m, linea);
+            multiset_insertar(mTodos, linea);
+        }
+
+        fclose(f);
+
+        return m;
     }
-
-    fclose(f);
-
-    return m;
+    else
+        return NULL;
 }
 
 lista_t* abrir_directorio(char* cadena) //OK
@@ -211,13 +190,6 @@ lista_t* abrir_directorio(char* cadena) //OK
 
     if(error != 0)
     {
-        /*)
-        cantidad = lista_cantidad(lista);
-        for(i = 0; i < cantidad; i++)
-            lista_eliminar(lista, 0);
-        free(lista);
-        lista = NULL;
-        */
         eliminarLista(lista);
     }
     return lista;
@@ -243,4 +215,41 @@ void eliminarLista(lista_t* lista)
 
     free(lista);
     lista = NULL;
+}
+
+void mostrarAyuda()
+{
+    char opcion;
+
+    printf("Bienvenido a cuentapalabras!\n\n");
+
+    printf("Este es un programa que le permitira contabilizar la cantidad de palabras contenidas en los archivos ");
+    printf("de texto de un directorio especificado.\n");
+
+    printf("A partir de la lectura de cada uno de los archivos de texto alojados en el directorio, se crearan otros ");
+    printf("con el fin de que pueda determinar la cantidad total de veces que se encuentra cada palabra ");
+    printf("(en total y por cada uno de los archivos).\n\n");
+
+    printf("Si desea mayor informacion sobre las opciones disponibles presione Y, caso contrario presione N\n");
+    printf("Y/N: ");
+    scanf("%[^\n]", &opcion);
+
+    if(opcion == 'y' || opcion == 'Y')
+    {
+        printf("\nESPECIFICACIONES SOBRE TOTALES\n\n");
+
+        printf("A partir del directorio que proporcione, considerando los archivos de texto que el mismo contenga, ");
+        printf("se creara un nuevo archivo conteniendo todas las palabras existentes entre los archivos y, ");
+        printf("el nuevo archivo, contendra dichas palabras con la cantidad de apariciones totales entre todos ");
+        printf("todos los archivos de texto que existen en la carpeta.\n");
+        printf("Las palabras y sus respectivas cantidades se encuentran ordenadas segun la cantidad de apariciones.\n");
+
+        printf("\nESPECIFICACIONES SOBRE CADA UNO\n\n");
+
+        printf("A partir del directorio que proporcione, considerando los archivos de texto que el mismo contenga, ");
+        printf("se creara un nuevo archivo conteniendo la cantidad de veces que aparece cada palabra en cada ");
+        printf("uno de los archivos.\n");
+        printf("Las palabras y sus respectivas cantidades se encuentran ordenadas segun la cantidad de apariciones.\n");
+    }
+    printf("\nEsperamos que la ayuda le haya sido de utilidad.\nHasta pronto!\n");
 }
