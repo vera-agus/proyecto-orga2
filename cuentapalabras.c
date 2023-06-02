@@ -20,17 +20,13 @@ void mostrarAyuda();
 
 int main(int argc, char* argv[])
 {
-    printf("%d %s %s", argc, argv[0], argv[1]);
-
     if(argc == 1 || (argc == 2 && strcmp(argv[1], "-h") == 0))
     {
         mostrarAyuda();
     }
     else
     {
-        char* pathDirectorio = "C:\\Users\\mlpro\\Downloads\\Dir";
-	    //char* pathDirectorio = argv[1];
-        //char* pathDirectorio = "C:\\Users\\mlpro\\OneDrive\\Documentos\\Universidad\\Computación\\Cursado actual\\Organización de Computadoras\\Código\\proyecto-orga2\\Dir";
+        char* pathDirectorio = argv[1];
         lista_t* archivos = abrir_directorio(pathDirectorio);
         multiset_t* mTodos = multiset_crear();
         multiset_t* m;
@@ -52,7 +48,11 @@ int main(int argc, char* argv[])
         multiset_eliminar(&mTodos);
         // Liberar espacio de la lista de archivos
         eliminarLista(archivos);
+
+        printf("Los archivos fueron generados\n");
     }
+
+    printf("Hasta pronto!\n");
 
     return 0;
 }
@@ -94,6 +94,7 @@ void cada_uno(multiset_t* mArchivo, char* nombreArchivo) //OK
 {
     FILE *cadauno = fopen("cadauno.out", "a+");
     lista_t l = multiset_elementos(mArchivo, comparar_multiset);
+    lista_ordenar(&l, &comparar);
     int i, cantidad;
     cantidad = lista_cantidad(&l);
     int aAux;
@@ -117,6 +118,7 @@ void totales(multiset_t* mTodos) //OK
 {
     FILE *totales = fopen("totales.out", "w+");
     lista_t l = multiset_elementos(mTodos, comparar_multiset);
+    lista_ordenar(&l, &comparar);
     int i, cantidad;
     cantidad = lista_cantidad(&l);
     int aAux;
@@ -251,5 +253,5 @@ void mostrarAyuda()
         printf("uno de los archivos.\n");
         printf("Las palabras y sus respectivas cantidades se encuentran ordenadas segun la cantidad de apariciones.\n");
     }
-    printf("\nEsperamos que la ayuda le haya sido de utilidad.\nHasta pronto!\n");
+    printf("\nEsperamos que la ayuda le haya sido de utilidad.\n");
 }

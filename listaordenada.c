@@ -93,26 +93,26 @@ elemento_t * lista_eliminar(lista_t* l, unsigned int pos) {
     elemento_t * toReturn= NULL;
     // Buscamos la celda correspondiente a la posición a eliminar
     int i;
-    for (i = 0; i < pos; i++) {
-        printf("holaa");
+    for (i = 0; i < pos; i++)
+    {
         anterior = actual;
         actual = actual->siguiente;
     }
-    if (anterior == NULL) {
+    if (anterior == NULL)
+    {
         // Si la celda a eliminar es la primera de la lista
         l->primera = actual->siguiente;
-    } else {
+    }
+    else
+    {
         // Si la celda a eliminar está en medio o al final de la lista
         anterior->siguiente = actual->siguiente;
     }
-    printf("holis");
     toReturn = (actual->elem);
     toReturn->a= (actual->elem->a);
     toReturn->b= (actual->elem->b);
     free(actual->elem);
-    free(actual); // Liberamos la memoria de la celda eliminada, PERDEMOS LA DIRECCION AL ELEMENTO.
-    printf("chau");
-    l->cantidad--; // Actualizamos la cantidad de elementos de la lista
+    l->cantidad = l->cantidad - 1; // Actualizamos la cantidad de elementos de la lista
     return toReturn;
 }
 
